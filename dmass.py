@@ -1,29 +1,37 @@
 import discord
-from discord.ext.commands import bot
-from discord import game
-from discord.ext import commands
 import asyncio
 import platform
 import colorsys
+
 import random
 import time
+import datetime
 
-client = commands.Bot(command_prefix = '+', case_insensitive=True)
+from discord.ext.commands import bot
+from discord import game
+from discord.ext import commands
+
+client = commands.Bot(command_prefix='+', case_insensitive=True)
 Client = discord.client
 Clientdiscord = discord.Client()
 
+
 @client.event
 async def on_ready():
-    print('Logged in as '+client.user.name+' (ID:'+client.user.id+') | Connected to '+str(len(client.servers))+' servers | Connected to '+str(len(set(client.get_all_members())))+' users')
+    print('Logged in as '+client.user.name+' (ID:'+client.user.id+') | Connected to ' +
+          str(len(client.servers))+' servers | Connected to '+str(len(set(client.get_all_members())))+' users')
     print('--------')
     print('--------')
     print('CREATED AND HOSTED BY INVADER OP')
 
-@client.command(pass_context = True)
-@commands.has_permissions(kick_members=True)     
+
+@client.command(pass_context=True)
+@commands.has_permissions(kick_members=True)
 async def userinfo(ctx, user: discord.Member):
-    r, g, b = tuple(int(x * 255) for x in colorsys.hsv_to_rgb(random.random(), 1, 1))
-    embed = discord.Embed(title="{}'s info".format(user.name), description="Here's what I could find.", color = discord.Color((r << 16) + (g << 8) + b))
+    r, g, b = tuple(int(x * 255)
+                    for x in colorsys.hsv_to_rgb(random.random(), 1, 1))
+    embed = discord.Embed(title="{}'s info".format(
+        user.name), description="Here's what I could find.", color=discord.Color((r << 16) + (g << 8) + b))
     embed.add_field(name="Name", value=user.name, inline=True)
     embed.add_field(name="ID", value=user.id, inline=True)
     embed.add_field(name="Status", value=user.status, inline=True)
@@ -31,17 +39,34 @@ async def userinfo(ctx, user: discord.Member):
     embed.add_field(name="Joined", value=user.joined_at)
     embed.set_thumbnail(url=user.avatar_url)
     await client.say(embed=embed)
-    
+
+
 @commands.has_permissions(administrator=True)
-@client.command(pass_context = True)
+@client.command(pass_context=True)
 async def send(ctx, *, content: str):
-        for member in ctx.message.server.members:
-            try:
-                await client.send_message(member, content)
-                await client.say("DM Sent To : {} :white_check_mark:  ".format(member))
-            except:
-                print("can't")
-                await client.say("DM can't Sent To : {} :x: ".format(member))
+    for member in ctx.message.server.members:
+        try:
+            await client.send_message(member, content)
+            await client.say("DM Sent To : {} :white_check_mark:  ".format(member))
+        except:
+            print("can't")
+            await client.say("DM can't Sent To : {} :x: ".format(member))
 
 
-client.run("NzA3OTE3NjAzOTMwMzc0MTQ0.XraVgA.zrTuJYoMtkrcrcTC_spF31WfUKY")                
+@client.command()
+async def ping(ctx):
+    await ctx.send(f'Pong! {round(bot.latency * 1000)}')
+
+
+@client.command()
+async def time(ctx, *, zone='UTC'):
+    now = str(datetime.datetime.now(tz=zone)).split('.')
+    await ctx.send('The time is = now[0]')
+
+
+@client.command()
+async def send(ctx, arg):
+    await ctx.send(arg)
+
+
+client.run("NzA3OTE3NjAzOTMwMzc0MTQ0.XraVgA.zrTuJYoMtkrcrcTC_spF31WfUKY")
